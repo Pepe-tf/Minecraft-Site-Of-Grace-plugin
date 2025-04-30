@@ -4,7 +4,7 @@ main: me.billhubs.site_Of_Grace.Site_Of_Grace
 api-version: '1.21'
 author: BillHub
 website: https://billhub.site
-description: A Bukkit plugin that brings Site of Grace-like functionality to your server with a clean, message-free interface.
+description: A plugin aimed at recreating the Site of Grace from Elden Ring.
 
 commands:
   grace:
