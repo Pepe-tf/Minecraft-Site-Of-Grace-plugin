@@ -1,0 +1,58 @@
+# Site Of Grace Plugin Configuration
+
+# The display name for the Site of Grace campfire item
+grace-item-name: "§6Site of Grace"
+
+# Menu Configurations
+grace-menu:
+  title: "§6Site of Grace"
+  size: 27  # Must be multiple of 9
+  items:
+    rest:
+      material: GOLDEN_APPLE
+      name: "§eRest at Grace"
+      slot: 13
+      lore: []
+      commands:
+        list:
+          - "heal %player%"
+        as_console: true
+        close_menu: true
+    fast-travel:
+      material: ENDER_PEARL
+      name: "§bFast Travel"
+      slot: 11
+      lore:
+        - "§7Click to view available"
+        - "§7Sites of Grace"
+      commands:
+        list: []
+        as_console: false
+        close_menu: false
+    custom_buff:
+      material: POTION
+      name: "§dReceive Buffs"
+      slot: 15
+      lore:
+        - "§7Click to receive"
+        - "§7temporary buffs"
+      commands:
+        list:
+          - "effect give %player% strength 300 1"
+          - "effect give %player% speed 300 1"
+        as_console: true
+        close_menu: true
+
+fast-travel-menu:
+  title: "§bFast Travel Menu"
+  grace-item:
+    material: CAMPFIRE
+    name: "§6Site of Grace"
+    lore:
+      - "§7World: %world%"
+      - "§7Location: %x%, %y%, %z%"
+      - ""
+      - "§eClick to travel"
+
+# Should debug messages be printed in the console?
+debug: false

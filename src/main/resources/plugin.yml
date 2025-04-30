@@ -1,0 +1,65 @@
+name: Site_Of_Grace
+version: '1.2.0'
+main: me.billhubs.site_Of_Grace.Site_Of_Grace
+api-version: '1.21'
+author: BillHub
+website: https://billhub.site
+description: A Bukkit plugin that brings Site of Grace-like functionality to your server with a clean, message-free interface.
+
+commands:
+  grace:
+    description: Main command for Site Of Grace plugin (message-free interface).
+    usage: |
+      /grace help - Shows command help
+      /grace get - Get a Site of Grace item
+      /grace reload - Reload plugin configuration
+      /grace rename <id> <name> - Rename a Site of Grace
+      /grace list - List all Site of Grace locations (admin only)
+    permission: siteofgrace.use
+    aliases: [sog, gracesite]
+
+permissions:
+  siteofgrace.*:
+    description: Gives access to all Site of Grace commands and features
+    default: op
+    children:
+      siteofgrace.use: true
+      siteofgrace.get: true
+      siteofgrace.reload: true
+      siteofgrace.place: true
+      siteofgrace.break: true
+      siteofgrace.teleport: true
+      siteofgrace.list: true
+      siteofgrace.remove: true
+
+  siteofgrace.use:
+    description: Allows using basic Site of Grace features
+    default: true
+
+  siteofgrace.get:
+    description: Allows getting Site of Grace items
+    default: op
+
+  siteofgrace.reload:
+    description: Allows reloading the plugin configuration
+    default: op
+
+  siteofgrace.place:
+    description: Allows placing Site of Grace
+    default: op
+
+  siteofgrace.break:
+    description: Allows breaking Site of Grace naturally
+    default: op
+
+  siteofgrace.teleport:
+    description: Allows teleporting to any Site of Grace
+    default: op
+
+  siteofgrace.list:
+    description: Allows listing all Site of Grace locations
+    default: op
+
+  siteofgrace.remove:
+    description: Allows removing Site of Grace using commands
+    default: op
