@@ -302,58 +302,83 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
 
     private void renameGrace(CommandSender sender, String idStr, String newName) {
         if (!sender.hasPermission("grace.admin")) {
+            sender.sendMessage("§cYou don't have permission to rename Sites of Grace!");
             return;
         }
-
+    
         try {
             int id = Integer.parseInt(idStr);
             ConfigurationSection gracesSection = graceConfig.getConfigurationSection("graces");
             if (gracesSection == null) {
+                sender.sendMessage("§cNo Sites of Grace found!");
                 return;
             }
-
+    
+            boolean found = false;
             for (String key : gracesSection.getKeys(false)) {
                 ConfigurationSection graceSection = gracesSection.getConfigurationSection(key);
                 if (graceSection != null && graceSection.getInt("id") == id) {
+                    String oldName = graceSection.getString("name", "Unknown");
                     graceSection.set("name", newName);
                     saveGraceFile();
+                    sender.sendMessage("§aSite of Grace #" + id + " renamed from '§e" + oldName + "§a' to '§e" + newName + "§a'");
+                    found = true;
                     break;
                 }
             }
+            
+            if (!found) {
+                sender.sendMessage("§cNo Site of Grace found with ID " + id);
+            }
         } catch (NumberFormatException e) {
-            // Invalid ID format, do nothing
+            sender.sendMessage("§cInvalid ID format! Please use a number.");
         }
     }
 
     private void showHelpMessage(CommandSender sender) {
-        // Empty implementation - no messages displayed
+        sender.sendMessage("§6=== Site of Grace Commands ===");
+        sender.sendMessage("§e/grace help §7- Shows this help message");
+        sender.sendMessage("§e/grace get §7- Get a Site of Grace item");
+        sender.sendMessage("§e/grace reload §7- Reload the plugin configuration");
+        sender.sendMessage("§e/grace rename <id> <name> §7- Rename a Site of Grace");
+        sender.sendMessage("§e/grace list §7- List all Site of Grace locations (admin only)");
     }
 
     private void reloadPlugin(CommandSender sender) {
         if (!sender.hasPermission("grace.admin")) {
+            sender.sendMessage("§cYou don't have permission to use this command!");
             return;
         }
-
+    
         reloadConfig();
         this.config = getConfig();
         setupGraceFile();
         setupUserFile();
         loadNextGraceId();
         cleanupInvalidGraces();
-
+    
         // Validate all online players
         for (Player player : Bukkit.getOnlinePlayers()) {
             validateUserGraces(player.getUniqueId());
         }
+        
+        sender.sendMessage("§aSite of Grace configuration reloaded successfully!");
     }
 
     private void giveGraceItem(CommandSender sender) {
         if (!(sender instanceof Player player)) {
+            sender.sendMessage("§cThis command can only be used by players!");
             return;
         }
-
+    
+        if (!player.hasPermission("siteofgrace.get")) {
+            player.sendMessage("§cYou don't have permission to get a Site of Grace!");
+            return;
+        }
+    
         ItemStack graceItem = createGraceItem();
         player.getInventory().addItem(graceItem);
+        player.sendMessage("§aYou received a §6Site of Grace§a item!");
     }
 
     private ItemStack createGraceItem() {
@@ -1169,10 +1194,32 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
 
     private void listGraces(CommandSender sender) {
         if (!sender.hasPermission("grace.admin")) {
+            sender.sendMessage("§cYou don't have permission to list Sites of Grace!");
             return;
         }
-
-        // No messages displayed, empty implementation
+    
+        ConfigurationSection gracesSection = graceConfig.getConfigurationSection("graces");
+        if (gracesSection == null || gracesSection.getKeys(false).isEmpty()) {
+            sender.sendMessage("§cNo Sites of Grace have been placed in the world.");
+            return;
+        }
+    
+        sender.sendMessage("§6=== Sites of Grace Locations ===");
+        
+        for (String key : gracesSection.getKeys(false)) {
+            ConfigurationSection graceSection = gracesSection.getConfigurationSection(key);
+            if (graceSection == null) continue;
+            
+            int id = graceSection.getInt("id", 0);
+            String name = graceSection.getString("name", "Unknown");
+            String world = graceSection.getString("world", "unknown");
+            int x = graceSection.getInt("x");
+            int y = graceSection.getInt("y");
+            int z = graceSection.getInt("z");
+            
+            sender.sendMessage(String.format("§e#%d §f- §6%s §f(§7%s: %d, %d, %d§f)", 
+                id, name, world, x, y, z));
+        }
     }
 
     private void startValidationTask() {
