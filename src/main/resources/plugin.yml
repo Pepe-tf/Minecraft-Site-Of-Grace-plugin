@@ -1,5 +1,5 @@
 name: Site_Of_Grace
-version: '0.1.3'
+version: '0.1.4'
 main: me.billhubs.site_Of_Grace.Site_Of_Grace
 api-version: '1.21'
 author: BillHub

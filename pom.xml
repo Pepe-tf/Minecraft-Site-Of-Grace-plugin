@@ -6,7 +6,7 @@
 
     <groupId>me.billhubs</groupId>
     <artifactId>Site_Of_Grace</artifactId>
-    <version>0.1.3</version>
+    <version>0.1.4</version>
     <packaging>jar</packaging>
 
     <name>Site_Of_Grace</name>
