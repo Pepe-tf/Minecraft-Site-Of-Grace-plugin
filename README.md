@@ -1,9 +1,9 @@
 ![Site of Grace Banner](assets/plugin.png)
 
-[![Version](https://img.shields.io/github/v/release/billhub/Site_Of_Grace?style=flat-square)](https://github.com/billhub/Site_Of_Grace/releases)
+[![Version](https://img.shields.io/badge/version-beta%200.1.4-blue?style=flat-square)](https://modrinth.com/plugin/site-of-grace)
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21-green?style=flat-square)](https://www.minecraft.net)
-[![Downloads](https://img.shields.io/github/downloads/billhub/Site_Of_Grace/total?style=flat-square)](https://github.com/billhub/Site_Of_Grace/releases)
-[![License](https://img.shields.io/github/license/billhub/Site_Of_Grace?style=flat-square)](LICENSE)
+[![Downloads](https://img.shields.io/modrinth/dt/site-of-grace?style=flat-square)](https://modrinth.com/plugin/site-of-grace)
+[![License](https://img.shields.io/github/license/Pepe-tf/Minecraft-Site-Of-Grace-plugin?style=flat-square)](https://github.com/Pepe-tf/Minecraft-Site-Of-Grace-plugin/blob/main/LICENSE)
 
 ## 🔥 Overview
 
@@ -22,7 +22,7 @@ Site of Grace is a Minecraft plugin that faithfully recreates the "Site of Grace
 
 ## 📥 Installation
 
-1. Download the latest release from the [releases page](https://github.com/billhub/Site_Of_Grace/releases)
+1. Download the latest release from [Modrinth](https://modrinth.com/plugin/site-of-grace)
 2. Place the JAR file in your server's `plugins` folder
 3. Restart your server or use a plugin manager to load the plugin
 4. The plugin will generate a default configuration file which you can customize
