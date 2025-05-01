@@ -159,6 +159,31 @@ sites:
     name: "Castle Gate"
 ```
 
+#### User Data (users.yml)
+```yaml
+players:
+  550e8400-e29b-41d4-a716-446655440000:  # Player UUID
+    name: "Steve"
+    last_grace: "spawn"  # ID of last activated Site of Grace
+    discovered_sites:    # List of discovered Sites of Grace
+      - "spawn"
+      - "castle"
+    settings:
+      particles: true    # Player's particle effect preferences
+      sounds: true      # Player's sound effect preferences
+  
+  f47ac10b-58cc-4372-a567-0e02b2c3d479:   # Another player
+    name: "Alex"
+    last_grace: "castle"
+    discovered_sites:
+      - "spawn"
+      - "castle"
+      - "dungeon"
+    settings:
+      particles: true
+      sounds: false
+```
+
 ## 🐛 Bug Reports & Feature Requests
 
 If you encounter any issues or have suggestions for improvements:
@@ -166,10 +191,10 @@ If you encounter any issues or have suggestions for improvements:
 1. Check the [existing issues](https://github.com/Pepe-tf/Minecraft-Site-Of-Grace-plugin/issues) first
 2. Submit a new issue using the appropriate template
 3. Provide as much detail as possible, including:
-    - Server version
-    - Plugin version
-    - Error messages (if any)
-    - Steps to reproduce
+   - Server version
+   - Plugin version
+   - Error messages (if any)
+   - Steps to reproduce
 
 ## 🤝 Contributing
 
