@@ -57,13 +57,35 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         this.graceItemName = config.getString("grace-item-name", "§6Site of Grace");
         this.graceMenuTitle = config.getString("grace-menu.title", "§6Site of Grace");
         this.fastTravelMenuTitle = config.getString("fast-travel-menu.title", "§bFast Travel Menu");
+
+        // Display fancy startup banner
+        getLogger().info("");
+        getLogger().info("═══════════════════════════════════════════");
+        getLogger().info("SITE OF GRACE v" + getDescription().getVersion() + "                      ");
+        getLogger().info("A tribute to FromSoftware's Elden Ring   ");
+        getLogger().info("Created by " + getDescription().getAuthors().get(0) + "                           ");
+        getLogger().info("Website: " + getDescription().getWebsite() + "              ");
+        getLogger().info("© 2023-2024 BillHub - All Rights Reserved   ");
+        getLogger().info("═══════════════════════════════════════════");
+        getLogger().info("⚔  §eInitializing components...          ");
+        getLogger().info("═══════════════════════════════════════════");
+        getLogger().info("");
+
         setupGraceFile();
         setupUserFile();
         loadNextGraceId();
-        cleanupInvalidGraces(); // Add this line
-        startValidationTask(); // Add this line
+        cleanupInvalidGraces();
+        startValidationTask();
+
         Bukkit.getPluginManager().registerEvents(this, this);
-        getLogger().info("Site Of Grace plugin enabled.");
+
+        // Display completion message
+        getLogger().info("");
+        getLogger().info("═══════════════════════════════════════════");
+        getLogger().info("PLUGIN ENABLED SUCCESSFULLY!           ");
+        getLogger().info("⚔  Embrace the grace, Tarnished...     ");
+        getLogger().info("═══════════════════════════════════════════");
+        getLogger().info("");
     }
 
     @Override
@@ -117,44 +139,44 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         try {
             // Make a copy of the configuration before saving to prevent null key errors
             FileConfiguration tempConfig = new YamlConfiguration();
-            
+
             // Copy all valid sections
             ConfigurationSection usersSection = userConfig.getConfigurationSection("users");
             if (usersSection != null) {
                 ConfigurationSection newUsersSection = tempConfig.createSection("users");
-                
+
                 for (String userKey : usersSection.getKeys(false)) {
                     if (userKey == null || userKey.isEmpty()) continue;
-                    
+
                     ConfigurationSection userSection = usersSection.getConfigurationSection(userKey);
                     if (userSection == null) continue;
-                    
+
                     ConfigurationSection newUserSection = newUsersSection.createSection(userKey);
-                    
+
                     // Copy last_grace if present and not null
                     String lastGrace = userSection.getString("last_grace");
                     if (lastGrace != null && !lastGrace.isEmpty()) {
                         newUserSection.set("last_grace", lastGrace);
                     }
-                    
+
                     // Copy activated_graces if present and not null
                     List<String> activatedGraces = userSection.getStringList("activated_graces");
                     if (activatedGraces != null && !activatedGraces.isEmpty()) {
                         // Filter out any null or empty entries
                         activatedGraces = activatedGraces.stream()
-                            .filter(g -> g != null && !g.isEmpty())
-                            .collect(Collectors.toList());
-                        
+                                .filter(g -> g != null && !g.isEmpty())
+                                .collect(Collectors.toList());
+
                         if (!activatedGraces.isEmpty()) {
                             newUserSection.set("activated_graces", activatedGraces);
                         }
                     }
                 }
             }
-            
+
             // Save the cleaned configuration
             tempConfig.save(userFile);
-            
+
             // Reload the config from file to ensure consistency
             userConfig = YamlConfiguration.loadConfiguration(userFile);
         } catch (IOException e) {
@@ -164,10 +186,10 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
 
     private void saveUserData(UUID playerId) {
         if (playerId == null) return;
-        
+
         ConfigurationSection userSection = getUserSection(playerId);
         if (userSection == null) return;
-    
+
         // Save last grace location
         String lastGrace = lastGraceLocation.get(playerId);
         if (lastGrace != null && !lastGrace.isEmpty()) {
@@ -184,21 +206,21 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         if (playerId == null) {
             return null;
         }
-        
+
         ConfigurationSection usersSection = userConfig.getConfigurationSection("users");
         if (usersSection == null) {
             usersSection = userConfig.createSection("users");
         }
-    
+
         String userKey = playerId.toString();
         if (userKey == null || userKey.isEmpty()) {
             return null;
         }
-        
+
         ConfigurationSection userSection = usersSection.getConfigurationSection(userKey);
         if (userSection == null) {
             userSection = usersSection.createSection(userKey);
-            
+
             // Initialize with default values to prevent null entries
             userSection.set("activated_graces", new ArrayList<String>());
             userSection.set("last_grace", "");
@@ -226,16 +248,16 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         if (userSection == null) {
             return new ArrayList<>();
         }
-        
+
         List<String> graces = userSection.getStringList("activated_graces");
         if (graces == null) {
             return new ArrayList<>();
         }
-        
+
         // Filter out any null values that might have gotten in somehow
         return graces.stream()
-            .filter(g -> g != null && !g.isEmpty())
-            .collect(Collectors.toList());
+                .filter(g -> g != null && !g.isEmpty())
+                .collect(Collectors.toList());
     }
 
     private void setActivatedGraces(UUID playerId, List<String> graces) {
@@ -248,12 +270,12 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         if (playerId == null || graceKey == null || graceKey.isEmpty()) {
             return;
         }
-        
+
         List<String> activated = getActivatedGraces(playerId);
         if (activated == null) {
             activated = new ArrayList<>();
         }
-        
+
         if (!activated.contains(graceKey)) {
             activated.add(graceKey);
             setActivatedGraces(playerId, activated);
@@ -282,14 +304,14 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         if (!sender.hasPermission("grace.admin")) {
             return;
         }
-    
+
         try {
             int id = Integer.parseInt(idStr);
             ConfigurationSection gracesSection = graceConfig.getConfigurationSection("graces");
             if (gracesSection == null) {
                 return;
             }
-    
+
             for (String key : gracesSection.getKeys(false)) {
                 ConfigurationSection graceSection = gracesSection.getConfigurationSection(key);
                 if (graceSection != null && graceSection.getInt("id") == id) {
@@ -311,14 +333,14 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         if (!sender.hasPermission("grace.admin")) {
             return;
         }
-    
+
         reloadConfig();
         this.config = getConfig();
         setupGraceFile();
         setupUserFile();
         loadNextGraceId();
         cleanupInvalidGraces();
-    
+
         // Validate all online players
         for (Player player : Bukkit.getOnlinePlayers()) {
             validateUserGraces(player.getUniqueId());
@@ -329,7 +351,7 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         if (!(sender instanceof Player player)) {
             return;
         }
-    
+
         ItemStack graceItem = createGraceItem();
         player.getInventory().addItem(graceItem);
     }
@@ -389,7 +411,7 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
                 event.setCancelled(true);
                 return;
             }
-    
+
             // Remove the grace
             removeGrace(loc);
         }
@@ -412,7 +434,7 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 0.5f, 2.0f);
             return;
         }
-    
+
         // Update last grace location
         lastGraceLocation.put(playerId, graceKey);
         saveUserData(playerId);
@@ -766,10 +788,10 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         int graceY = Integer.parseInt(locData[2]);
         int graceZ = Integer.parseInt(locData[3]);
         Location graceLocation = new Location(world, graceX + 0.5, graceY + 0.5, graceZ + 0.5);
-        
+
         // Find adjacent location for the player to spawn
         Location destination = findAdjacentSpawnLocation(world, graceX, graceY, graceZ);
-    
+
         playTeleportEffects(player, player.getLocation());
         player.teleport(destination);
         player.closeInventory();
@@ -848,26 +870,26 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         // Get the grace location for effects
         ConfigurationSection graceSection = graceConfig.getConfigurationSection("graces." + lastGrace);
         if (graceSection == null) return;
-        
+
         String worldName = graceSection.getString("world");
         World world = Bukkit.getWorld(worldName);
         if (world == null) return;
-        
+
         int graceX = graceSection.getInt("x");
         int graceY = graceSection.getInt("y");
         int graceZ = graceSection.getInt("z");
-        
+
         // Original grace location for effects
         Location graceLocation = new Location(world, graceX + 0.5, graceY + 0.5, graceZ + 0.5);
-        
+
         // Adjacent spot for player to spawn
         Location respawnLoc = findAdjacentSpawnLocation(world, graceX, graceY, graceZ);
         if (respawnLoc == null) return;
-    
+
         // Only override if the death world has Sites of Grace
         if (hasGracesInWorld(player.getWorld().getName())) {
             event.setRespawnLocation(respawnLoc);
-    
+
             // Schedule effects for the next tick since respawn location is not immediate
             Bukkit.getScheduler().runTask(this, () -> {
                 playRespawnEffects(player, graceLocation);
@@ -886,38 +908,38 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         int x = graceSection.getInt("x");
         int y = graceSection.getInt("y");
         int z = graceSection.getInt("z");
-        
+
         // Find an adjacent block to spawn on
         return findAdjacentSpawnLocation(world, x, y, z);
     }
-    
+
     private Location findAdjacentSpawnLocation(World world, int x, int y, int z) {
         if (world == null) {
             return null;
         }
-        
+
         // Possible adjacent block positions (cardinal directions first, then diagonals as fallbacks)
-        int[][] adjacentOffsets = new int[][] {
-            {1, 0}, {-1, 0}, {0, 1}, {0, -1}, 
-            {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+        int[][] adjacentOffsets = new int[][]{
+                {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
         };
-        
+
         try {
             // Try to find a safe block in one of the cardinal directions first
             for (int[] offset : adjacentOffsets) {
                 int newX = x + offset[0];
                 int newZ = z + offset[1];
-                
+
                 // Check if this location is safe (solid block below, two air blocks above)
                 Block block = world.getBlockAt(newX, y, newZ);
                 Block blockBelow = world.getBlockAt(newX, y - 1, newZ);
                 Block blockAbove = world.getBlockAt(newX, y + 1, newZ);
                 Block blockAbove2 = world.getBlockAt(newX, y + 2, newZ);
-                
-                if (block.getType() == Material.AIR && 
-                    blockAbove.getType() == Material.AIR &&
-                    blockAbove2.getType() == Material.AIR &&
-                    blockBelow.getType().isSolid()) {
+
+                if (block.getType() == Material.AIR &&
+                        blockAbove.getType() == Material.AIR &&
+                        blockAbove2.getType() == Material.AIR &&
+                        blockBelow.getType().isSolid()) {
                     // Found a safe spot, return it with proper centering
                     return new Location(world, newX + 0.5, y + 0.5, newZ + 0.5, 0, 0); // Add yaw and pitch as 0
                 }
@@ -925,7 +947,7 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         } catch (Exception e) {
             getLogger().warning("Error finding adjacent spawn location: " + e.getMessage());
         }
-        
+
         // If no safe adjacent block was found, return the original grace location as fallback
         return new Location(world, x + 0.5, y + 0.5, z + 0.5, 0, 0); // Add yaw and pitch as 0
     }
@@ -1110,25 +1132,25 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
 
     private void validateUserGraces(UUID playerId) {
         if (playerId == null) return;
-        
+
         ConfigurationSection userSection = getUserSection(playerId);
         if (userSection == null) return;
-        
+
         try {
             List<String> activatedGraces = userSection.getStringList("activated_graces");
             String lastGrace = userSection.getString("last_grace");
             boolean changed = false;
-    
+
             // Remove invalid activated graces and null values
             List<String> validActivated = activatedGraces.stream()
-                .filter(grace -> grace != null && !grace.isEmpty() && isValidGrace(grace))
-                .collect(Collectors.toList());
-    
+                    .filter(grace -> grace != null && !grace.isEmpty() && isValidGrace(grace))
+                    .collect(Collectors.toList());
+
             if (validActivated.size() != activatedGraces.size()) {
                 userSection.set("activated_graces", validActivated);
                 changed = true;
             }
-    
+
             // Check last grace validity
             if (lastGrace != null && !lastGrace.isEmpty() && !isValidGrace(lastGrace)) {
                 // Set to empty string instead of null to avoid YAML issues
@@ -1136,7 +1158,7 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
                 lastGraceLocation.remove(playerId);
                 changed = true;
             }
-    
+
             if (changed) {
                 saveUserFileAsync();
             }
@@ -1149,7 +1171,7 @@ public final class Site_Of_Grace extends JavaPlugin implements Listener {
         if (!sender.hasPermission("grace.admin")) {
             return;
         }
-        
+
         // No messages displayed, empty implementation
     }
 
